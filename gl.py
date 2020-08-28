@@ -74,29 +74,10 @@ class Render(object):
             return V3(0, 0, 0)
         return V3(v0[0]/vLength, v0[1]/vLength, v0[2]/vLength)
 
-    def lookAt(self, eye, camPosition = V3(0,0,0)):
-
-        forward = np.subtract(camPosition, eye)
-        print(type(np.linalg.norm(forward)))
-        print(type(self.norm(forward)))
-        forward = forward / np.linalg.norm(forward)
-
-        right = np.cross(V3(0,1,0), forward)
-        right = right / np.linalg.norm(right)
-
-        up = np.cross(forward, right)
-        up = up / np.linalg.norm(up)
-
-        camMatrix = matrix([[right[0], up[0], forward[0], camPosition.x],
-                            [right[1], up[1], forward[1], camPosition.y],
-                            [right[2], up[2], forward[2], camPosition.z],
-                            [0,0,0,1]])
-
-        self.viewMatrix = np.linalg.inv(camMatrix)
 
     def createProjectionMatrix(self, n = 0.1, f = 1000, fov = 60):
 
-        t = tan((fov * np.pi / 180) / 2) * n
+        t = tan((fov * 3.14159 / 180) / 2) * n
         r = t * self.vpWidth / self.vpHeight
 
         self.projectionMatrix = matrix([[n / r, 0, 0, 0],
@@ -357,12 +338,15 @@ class Render(object):
         rotationMatrix = self.createRotationMatrix(rotate)
 
         return translateMatrix * rotationMatrix * scaleMatrix
+    
+    def deg2rad(self,deg):
+        rad=deg*(3.14159/180)
 
     def createRotationMatrix(self, rotate=V3(0,0,0)):
 
-        pitch = np.deg2rad(rotate.x)
-        yaw = np.deg2rad(rotate.y)
-        roll = np.deg2rad(rotate.z)
+        pitch = self.deg2rad(rotate.x)
+        yaw = self.deg2rad(rotate.y)
+        roll = self.deg2rad(rotate.z)
 
         rotationX = matrix([[1, 0, 0, 0],
                             [0, cos(pitch),-sin(pitch), 0],
